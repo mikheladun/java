@@ -1,0 +1,51 @@
+package business.service.impl;
+
+import business.service.ExampleService;
+import persistence.eao.ExampleEao;
+import persistence.entity.ExampleEntity;
+
+import java.util.List;
+import java.util.logging.Logger;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * A stateless session bean to provide business service implementation
+ * 
+ * @author Mikhel Adun
+ */
+@Component
+@Stateless
+@EJB(name = "java:global/ExampleService", beanInterface = ExampleService.class)
+public class ExampleServiceImpl implements ExampleService {
+    private static final Logger logger = Logger.getLogger(ExampleServiceImpl.class.getName());
+
+    @Inject
+    public ExampleEao member;
+
+    @Override
+    @Transactional
+    public void add(ExampleEntity entity) {
+	 member.save(entity);
+    }
+
+    @Override
+    public List<ExampleEntity> getMembers() {
+	return member.findAll();
+    }
+
+    @Override
+    public ExampleEntity getMember(long id) {
+	return member.findById(id);
+    }
+
+    @Override
+    public ExampleEntity getMember(String email) {
+	return member.findByPropertyUniqueResult("email", email);
+    }
+}
